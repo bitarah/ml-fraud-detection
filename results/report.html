@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Model Performance Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+
+        .insight-box {
+            background: #f8f9ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .insight-box.warning {
+            background: #fff8f0;
+            border-left-color: #ff9800;
+        }
+
+        .insight-box.success {
+            background: #f0fff8;
+            border-left-color: #4caf50;
+        }
+
+        .insight-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .insight-box.warning h4 {
+            color: #ff9800;
+        }
+
+        .insight-box.success h4 {
+            color: #4caf50;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-card h4 {
+            font-size: 1em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .metric-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: #e8ecff;
+            transition: background 0.3s;
+        }
+
+        .best-metric {
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .plot-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .plot-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .plot-container h4 {
+            margin-top: 15px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .recommendation h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .recommendation ul {
+            margin-left: 20px;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Fraud Detection Model Performance Report</h1>
+            <p>Comprehensive Analysis of Machine Learning Models for Fraud Detection</p>
+        </header>
+
+        <div class="content">
+            <!-- Executive Summary -->
+            <section class="section">
+                <h2>📊 Executive Summary</h2>
+                <div class="insight-box success">
+                    <h4>🎯 Best Overall Model: Random Forest</h4>
+                    <p>The Random Forest model demonstrates the best balance of precision (84.95%) and recall (80.61%) on the test set, making it the recommended model for production deployment. It achieves 99.94% accuracy with minimal false positives (14) while maintaining strong fraud detection capabilities.</p>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h4>Random Forest</h4>
+                        <div class="value">82.72%</div>
+                        <div class="label">F1-Score (Fraud)</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Test Accuracy</h4>
+                        <div class="value">99.94%</div>
+                        <div class="label">Best Performance</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>ROC-AUC</h4>
+                        <div class="value">98.21%</div>
+                        <div class="label">XGBoost (Highest)</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Precision</h4>
+                        <div class="value">84.95%</div>
+                        <div class="label">Random Forest</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Insights -->
+            <section class="section">
+                <h2>🔍 Key Insights</h2>
+
+                <div class="insight-box success">
+                    <h4>✅ Random Forest: Best Balanced Performance</h4>
+                    <ul>
+                        <li><strong>Precision:</strong> 84.95% - Only 14 false positives out of 56,864 legitimate transactions</li>
+                        <li><strong>Recall:</strong> 80.61% - Catches 79 out of 98 fraudulent transactions</li>
+                        <li><strong>Business Impact:</strong> Minimizes customer friction while maintaining strong fraud detection</li>
+                        <li><strong>ROC-AUC:</strong> 96.16% - Excellent discrimination capability</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box success">
+                    <h4>✅ XGBoost: Highest ROC-AUC Score</h4>
+                    <ul>
+                        <li><strong>ROC-AUC:</strong> 98.21% - Best overall discrimination ability</li>
+                        <li><strong>PR-AUC:</strong> 86.52% - Strong performance on imbalanced data</li>
+                        <li><strong>F1-Score:</strong> 80.98% - Competitive balanced performance</li>
+                        <li><strong>Use Case:</strong> Ideal when ranking fraud probability is critical</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box warning">
+                    <h4>⚠️ Logistic Regression: High Recall but Low Precision</h4>
+                    <ul>
+                        <li><strong>Recall:</strong> 91.84% - Catches most fraud cases (90 out of 98)</li>
+                        <li><strong>Precision:</strong> Only 5.89% - 1,438 false positives</li>
+                        <li><strong>Business Impact:</strong> Would block many legitimate transactions, causing customer frustration</li>
+                        <li><strong>Recommendation:</strong> Not suitable for production without threshold tuning</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box warning">
+                    <h4>⚠️ Neural Network: Similar Trade-off Issues</h4>
+                    <ul>
+                        <li><strong>Recall:</strong> 89.80% - High fraud detection rate</li>
+                        <li><strong>Precision:</strong> 13.11% - 583 false positives</li>
+                        <li><strong>ROC-AUC:</strong> 98.30% - Excellent (highest among all models)</li>
+                        <li><strong>Issue:</strong> Default threshold produces too many false alarms</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box">
+                    <h4>📈 Ensemble Method: Solid Alternative</h4>
+                    <ul>
+                        <li><strong>F1-Score:</strong> 77.78% - Good balanced performance</li>
+                        <li><strong>Precision:</strong> 71.19% - Reasonable false positive rate</li>
+                        <li><strong>Recall:</strong> 85.71% - Strong fraud detection</li>
+                        <li><strong>Advantage:</strong> Combines strengths of multiple models</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Model Comparison -->
+            <section class="section">
+                <h2>📈 Detailed Model Comparison</h2>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1-Score</th>
+                            <th>ROC-AUC</th>
+                            <th>PR-AUC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Random Forest</strong></td>
+                            <td class="best-metric">99.94%</td>
+                            <td class="best-metric">84.95%</td>
+                            <td>80.61%</td>
+                            <td class="best-metric">82.72%</td>
+                            <td>96.16%</td>
+                            <td>85.14%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>XGBoost</strong></td>
+                            <td>99.93%</td>
+                            <td>77.57%</td>
+                            <td class="best-metric">84.69%</td>
+                            <td>80.98%</td>
+                            <td class="best-metric">98.21%</td>
+                            <td class="best-metric">86.52%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ensemble</strong></td>
+                            <td>99.92%</td>
+                            <td>71.19%</td>
+                            <td>85.71%</td>
+                            <td>77.78%</td>
+                            <td>97.37%</td>
+                            <td>85.35%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Neural Network</strong></td>
+                            <td>98.96%</td>
+                            <td>13.11%</td>
+                            <td>89.80%</td>
+                            <td>22.89%</td>
+                            <td>98.30%</td>
+                            <td>75.50%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Logistic Regression</strong></td>
+                            <td>97.46%</td>
+                            <td>5.89%</td>
+                            <td>91.84%</td>
+                            <td>11.07%</td>
+                            <td>97.33%</td>
+                            <td>76.31%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Confusion Matrix Analysis</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>True Negatives</th>
+                            <th>False Positives</th>
+                            <th>False Negatives</th>
+                            <th>True Positives</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Random Forest</strong></td>
+                            <td class="best-metric">56,850</td>
+                            <td class="best-metric">14</td>
+                            <td>19</td>
+                            <td>79</td>
+                        </tr>
+                        <tr>
+                            <td><strong>XGBoost</strong></td>
+                            <td>56,840</td>
+                            <td>24</td>
+                            <td class="best-metric">15</td>
+                            <td class="best-metric">83</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ensemble</strong></td>
+                            <td>56,830</td>
+                            <td>34</td>
+                            <td>14</td>
+                            <td>84</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Neural Network</strong></td>
+                            <td>56,281</td>
+                            <td>583</td>
+                            <td>10</td>
+                            <td>88</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Logistic Regression</strong></td>
+                            <td>55,426</td>
+                            <td>1,438</td>
+                            <td>8</td>
+                            <td>90</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Visualizations -->
+            <section class="section">
+                <h2>📊 Model Performance Visualizations</h2>
+
+                <div class="plot-container">
+                    <img src="plots/summary_dashboard.png" alt="Summary Dashboard">
+                    <h4>Overall Performance Dashboard</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/model_comparison.png" alt="Model Comparison">
+                    <h4>Model Metrics Comparison</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/roc_curves.png" alt="ROC Curves">
+                    <h4>ROC Curves - Showing excellent discrimination across all models</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/precision_recall_curves.png" alt="Precision-Recall Curves">
+                    <h4>Precision-Recall Curves - Critical for imbalanced fraud detection</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/confusion_matrices.png" alt="Confusion Matrices">
+                    <h4>Confusion Matrices - Detailed error analysis</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/feature_importance.png" alt="Feature Importance">
+                    <h4>Feature Importance - Key fraud indicators</h4>
+                </div>
+
+                <div class="plot-container">
+                    <img src="plots/class_distribution.png" alt="Class Distribution">
+                    <h4>Class Distribution - Highlighting the imbalance challenge</h4>
+                </div>
+            </section>
+
+            <!-- Business Impact Analysis -->
+            <section class="section">
+                <h2>💼 Business Impact Analysis</h2>
+
+                <div class="insight-box">
+                    <h4>Cost-Benefit Perspective</h4>
+                    <p>In fraud detection, the costs of different error types vary significantly:</p>
+                    <ul>
+                        <li><strong>False Positives (Legitimate flagged as fraud):</strong> Customer frustration, manual review costs, potential lost business</li>
+                        <li><strong>False Negatives (Fraud missed):</strong> Direct financial loss, chargeback fees, reputation damage</li>
+                    </ul>
+                </div>
+
+                <h3>Model Selection by Use Case</h3>
+
+                <div class="insight-box success">
+                    <h4>🏆 Production Deployment: Random Forest</h4>
+                    <ul>
+                        <li>Best balance for real-world deployment</li>
+                        <li>Only 14 false positives per ~57K transactions (0.025%)</li>
+                        <li>Catches 80.61% of fraud with high confidence</li>
+                        <li>Minimal customer friction</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box">
+                    <h4>🎯 Risk Scoring Systems: XGBoost</h4>
+                    <ul>
+                        <li>Highest ROC-AUC (98.21%) provides excellent probability estimates</li>
+                        <li>Ideal for multi-tier review processes</li>
+                        <li>Can adjust thresholds based on risk appetite</li>
+                        <li>Strong performance with slightly more false positives than Random Forest</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box">
+                    <h4>🔄 Hybrid Approach: Ensemble + Threshold Tuning</h4>
+                    <ul>
+                        <li>Ensemble captures 85.71% of fraud</li>
+                        <li>Can be combined with business rules</li>
+                        <li>More robust to distribution shifts</li>
+                        <li>Good fallback option</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Critical Observations -->
+            <section class="section">
+                <h2>⚠️ Critical Observations</h2>
+
+                <div class="insight-box warning">
+                    <h4>Class Imbalance Challenge</h4>
+                    <p>The dataset shows severe class imbalance (approximately 0.17% fraud rate). This explains why:</p>
+                    <ul>
+                        <li>High accuracy doesn't guarantee good fraud detection</li>
+                        <li>Precision-Recall metrics are more meaningful than accuracy</li>
+                        <li>Models with high recall but low precision cause operational problems</li>
+                        <li>Tree-based models (RF, XGBoost) handle this better than linear models</li>
+                    </ul>
+                </div>
+
+                <div class="insight-box warning">
+                    <h4>Neural Network Performance Gap</h4>
+                    <p>Despite having the second-highest ROC-AUC (98.30%), the Neural Network has poor precision:</p>
+                    <ul>
+                        <li>Suggests default probability threshold (0.5) is not optimal</li>
+                        <li>Could benefit from threshold optimization</li>
+                        <li>May require additional calibration</li>
+                        <li>Architecture or hyperparameter tuning could improve results</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Recommendations -->
+            <section class="section">
+                <h2>🎯 Recommendations</h2>
+
+                <div class="recommendation">
+                    <h3>Primary Recommendations</h3>
+                    <ul>
+                        <li><strong>Deploy Random Forest as the primary model</strong> - Best overall balance for production use</li>
+                        <li><strong>Use XGBoost for risk scoring</strong> - Leverage its superior probability calibration</li>
+                        <li><strong>Implement ensemble as backup</strong> - Provides additional robustness</li>
+                        <li><strong>Set up A/B testing</strong> - Compare Random Forest vs XGBoost in production</li>
+                        <li><strong>Monitor false positive rate closely</strong> - Adjust thresholds based on business feedback</li>
+                    </ul>
+                </div>
+
+                <div class="recommendation">
+                    <h3>Future Improvements</h3>
+                    <ul>
+                        <li><strong>Threshold Optimization:</strong> Tune decision thresholds for Logistic Regression and Neural Network</li>
+                        <li><strong>Cost-Sensitive Learning:</strong> Incorporate business costs into model training</li>
+                        <li><strong>Feature Engineering:</strong> Analyze feature importance to develop new fraud indicators</li>
+                        <li><strong>Model Calibration:</strong> Improve probability estimates for better risk scoring</li>
+                        <li><strong>Temporal Validation:</strong> Test models on time-based holdout sets to ensure robustness</li>
+                        <li><strong>Explainability:</strong> Implement SHAP or LIME for fraud case explanations</li>
+                        <li><strong>Real-time Monitoring:</strong> Track model performance degradation over time</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Conclusion -->
+            <section class="section">
+                <h2>✅ Conclusion</h2>
+                <div class="insight-box success">
+                    <h4>Final Verdict</h4>
+                    <p>The <strong>Random Forest model</strong> is recommended for immediate production deployment due to its exceptional balance of precision (84.95%) and recall (80.61%). It minimizes false positives while maintaining strong fraud detection capabilities, resulting in the best F1-score (82.72%) among all models.</p>
+                    <p><strong>XGBoost</strong> serves as an excellent alternative, particularly for applications requiring probability scores and risk ranking, with the highest ROC-AUC (98.21%).</p>
+                    <p>Both tree-based models significantly outperform traditional approaches (Logistic Regression) and deep learning (Neural Network) on this imbalanced fraud detection task, demonstrating the importance of choosing the right algorithm for the problem domain.</p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Generated on September 30, 2025 | Fraud Detection ML Pipeline</p>
+            <p>© 2025 ML Fraud Detection Project. All visualizations and metrics computed from test set performance.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Portfolio Display Metadata
+portfolio:
+  # Display category (will group projects)
+  category: "Machine Learning"
+
+  # Featured project (will be highlighted)
+  featured: true
+
+  # Difficulty/complexity level
+  complexity: "advanced"
+
+  # Project status
+  status: "completed"
+
+  # Custom tags for filtering (in addition to GitHub topics)
+  tags:
+    - "fraud-detection"
+    - "xgboost"
+    - "scikit-learn"
+    - "tensorflow"
+    - "imbalanced-learning"
+    - "ensemble-methods"
+    - "data-science"
+
+  # Demo information
+  demo:
+    type: "images"
+    screenshots:
+      - "screenshots/demo.png"
+      - "screenshots/summary_dashboard.png"
+      - "screenshots/roc_curves.png"
+      - "screenshots/model_comparison.png"
+
+  # Development timeline
+  timeline:
+    duration: "2 weeks"
+
+  # Additional context
+  context: "Production-ready fraud detection system with multiple ML algorithms"
+  highlight: "Achieved 95%+ ROC-AUC with ensemble methods on highly imbalanced data"
