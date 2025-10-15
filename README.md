@@ -285,5 +285,3 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 ⭐ **Star this repository** if you find it helpful!
-
-Built with ❤️ for the ML community
